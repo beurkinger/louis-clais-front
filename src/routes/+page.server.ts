@@ -1,12 +1,12 @@
-import type { PageLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import type { Post } from '$lib/sanity.types';
 import { error } from '@sveltejs/kit';
 import { createClient } from "@sanity/client";
-import { env } from '$env/dynamic/public';
+import { SANITY_PROJECT_ID } from '$env/static/private';
 
 
 const client = createClient({
-    projectId: env.PUBLIC_SANITY_PROJECT_ID,
+    projectId: SANITY_PROJECT_ID,
     dataset: "production",
     apiVersion: "2024-01-01",
     useCdn: false,
@@ -14,11 +14,11 @@ const client = createClient({
 
 const { projectId, dataset } = client.config();
 
-const NUM_POSTS_PER_PAGE = 2;
+const NUM_POSTS_PER_PAGE = 6;
 
 const POST_FILTER = `[_type == "post" && defined(slug.current)]`;
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url }) => {
     const pageParam = Number(url.searchParams.get('p') || 0);
 
     const postsCountQuery = `count(*${POST_FILTER})`;
